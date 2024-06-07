@@ -3,13 +3,13 @@ const FPS = 60;
 let canvas;
 let context;
 
-class Tangerine {
-  static URLS = [
-    "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f97a.png",
-    "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f634.png",
-    "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f60e.png"
-  ];
+const images = [
+  "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f97a.png",
+  "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f634.png",
+  "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f60e.png",
+];
 
+class Tangerine {
   constructor(x, y, size) {
     this.image = new Image();
     this.x = x;
@@ -17,19 +17,19 @@ class Tangerine {
     this.size = size;
 
     this.angle = Math.random() * 2 * Math.PI;
-    this.v = 1000;
+    this.v = 1000 / this.size;
 
     this.cooltime = 1;
     this.life = 200 / this.size;
 
-    this.image.src = Tangerine.URLS[Math.floor(Math.random() * Tangerine.URLS.length)];
+    this.image.src = images[Math.floor(Math.random() * images.length)];
   }
 
-  tick() {
+  move() {
     const vx = Math.cos(this.angle) * this.v;
     const vy = Math.sin(this.angle) * this.v;
-    this.x += vx / this.size;
-    this.y += vy / this.size;
+    this.x += vx;
+    this.y += vy;
 
     if (this.x > canvas.width) {
       this.x -= canvas.width;
@@ -44,7 +44,9 @@ class Tangerine {
     if (this.y < 0) {
       this.y += canvas.height;
     }
+  }
 
+  tickTanger() {
     this.life -= 1 / FPS;
     this.cooltime -= 1 / FPS;
 
@@ -52,7 +54,14 @@ class Tangerine {
       tangerines.splice(tangerines.indexOf(this), 1);
       tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
       tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
+
+      summonParticle(this.x, this.y, 20);
     }
+  }
+
+  tick() {
+    this.move();
+    this.tickTanger();
   }
 
   render() {
@@ -72,8 +81,36 @@ class Tangerine {
 
 const tangerines = [new Tangerine(0, 0, 500)];
 
+class TangerineParticle extends Tangerine {
+  constructor(x, y, size) {
+    super(x, y, size);
+    this.v = 10;
+  }
+
+  tickParticle() {
+    this.size -= 1;
+  }
+
+  tick() {
+    this.move();
+
+    this.tickParticle();
+  }
+}
+
+const particles = [];
+
+function summonParticle(x, y, count) {
+  for (let i = 0; i < count; i++) {
+    particles.push(
+      new TangerineParticle(x, y, Math.random() * 10 + 10),
+    );
+  }
+}
+
 function tick() {
   tangerines.forEach((tangerine) => tangerine.tick());
+  particles.forEach((particle) => particle.tick());
 
   for (let i = 0; i < tangerines.length; i++) {
     let break_ = false;
@@ -90,12 +127,22 @@ function tick() {
         tangerines.splice(i, 1);
         tangerines.push(new Tangerine(t1.x, t2.y, t1.size + t2.size));
         break_ = true;
+        summonParticle(t2.x, t1.y, 20);
         break;
       }
     }
 
     if (break_) {
       break;
+    }
+  }
+
+  for (let i = 0; i < particles.length; i++) {
+    const particle = particles[i];
+
+    if (particle.size <= 0) {
+      particles.splice(i, 1);
+      i--;
     }
   }
 }
@@ -105,6 +152,7 @@ function render() {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   tangerines.forEach((tangerine) => tangerine.render());
+  particles.forEach((particle) => particle.render());
 }
 
 function resize() {

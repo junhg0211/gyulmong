@@ -79,7 +79,7 @@ class Tangerine {
   }
 }
 
-const tangerines = [new Tangerine(0, 0, 500)];
+const tangerines = [];
 
 class TangerineParticle extends Tangerine {
   constructor(x, y, size) {
@@ -102,9 +102,7 @@ const particles = [];
 
 function summonParticle(x, y, count) {
   for (let i = 0; i < count; i++) {
-    particles.push(
-      new TangerineParticle(x, y, Math.random() * 10 + 10),
-    );
+    particles.push(new TangerineParticle(x, y, Math.random() * 10 + 10));
   }
 }
 
@@ -166,6 +164,13 @@ document.addEventListener("DOMContentLoaded", () => {
   context = canvas.getContext("2d");
 
   resize();
+  tangerines.push(
+    new Tangerine(
+      canvas.width / 2 * window.devicePixelRatio,
+      canvas.height / 2 * window.devicePixelRatio,
+      500,
+    ),
+  );
 
   setInterval(() => {
     tick();

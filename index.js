@@ -3,6 +3,8 @@ const FPS = 60;
 let canvas;
 let context;
 
+let mouseX, mouseY;
+
 const images = [
   "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f97a.png",
   "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f634.png",
@@ -50,7 +52,9 @@ class Tangerine {
     this.life -= 1 / FPS;
     this.cooltime -= 1 / FPS;
 
-    if (this.life <= 0) {
+    const distance = Math.hypot(this.x - mouseX, this.y - mouseY);
+
+    if (this.life <= 0 || distance < this.size) {
       tangerines.splice(tangerines.indexOf(this), 1);
       tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
       tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
@@ -116,6 +120,7 @@ function tick() {
     if (t1.cooltime > 0) {
       continue;
     }
+
     for (let j = i + 1; j < tangerines.length; j++) {
       const t2 = tangerines[j];
 
@@ -151,6 +156,8 @@ function render() {
 
   tangerines.forEach((tangerine) => tangerine.render());
   particles.forEach((particle) => particle.render());
+
+  context.fillRect(mouseX, mouseY, 10, 10);
 }
 
 function resize() {
@@ -166,8 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
   resize();
   tangerines.push(
     new Tangerine(
-      canvas.width / 2 * window.devicePixelRatio,
-      canvas.height / 2 * window.devicePixelRatio,
+      (canvas.width / 2) * window.devicePixelRatio,
+      (canvas.height / 2) * window.devicePixelRatio,
       500,
     ),
   );
@@ -176,4 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tick();
     render();
   }, 1000 / FPS);
+});
+
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX * window.devicePixelRatio;
+  mouseY = e.clientY * window.devicePixelRatio;
 });

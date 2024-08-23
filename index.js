@@ -162,7 +162,7 @@ function render() {
   tangerines.forEach((tangerine) => tangerine.render());
   particles.forEach((particle) => particle.render());
 
-  context.fillRect(mouseX, mouseY, 10, 10);
+  // context.fillRect(mouseX, mouseY, 10, 10);
 }
 
 function resize() {

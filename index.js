@@ -4,6 +4,7 @@ let canvas;
 let context;
 
 let mouseX, mouseY;
+let mouseDown;
 
 const images = [
   "https://www.gstatic.com/android/keyboard/emojikitchen/20211115/u1f34a/u1f34a_u1f97a.png",
@@ -48,16 +49,20 @@ class Tangerine {
     }
   }
 
+  split() {
+    tangerines.splice(tangerines.indexOf(this), 1);
+    tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
+    tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
+  }
+
   tickTanger() {
     this.life -= 1 / FPS;
     this.cooltime -= 1 / FPS;
 
     const distance = Math.hypot(this.x - mouseX, this.y - mouseY);
 
-    if (this.life <= 0 || distance < this.size) {
-      tangerines.splice(tangerines.indexOf(this), 1);
-      tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
-      tangerines.push(new Tangerine(this.x, this.y, this.size / 2));
+    if (this.life <= 0 || distance < this.size && mouseDown) {
+      this.split();
 
       summonParticle(this.x, this.y, 20);
     }
@@ -189,3 +194,17 @@ document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX * window.devicePixelRatio;
   mouseY = e.clientY * window.devicePixelRatio;
 });
+
+document.addEventListener("mousedown", (e) => {
+  if (e.button !== 0)
+    return;
+  
+  mouseDown = true;
+});
+
+document.addEventListener("mouseup", (e) => {
+  if (e.button !== 0)
+    return;
+  
+  mouseDown = false;
+})

@@ -23,7 +23,7 @@ class Tangerine {
     this.v = 500 / this.size;
 
     this.cooltime = 1;
-    this.life = 400 / this.size;
+    this.life = 200 / this.size;
 
     this.image.src = images[Math.floor(Math.random() * images.length)];
   }

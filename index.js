@@ -1,4 +1,4 @@
-const FPS = 60;
+const FPS = 144;
 
 let canvas;
 let context;
@@ -20,10 +20,10 @@ class Tangerine {
     this.size = size;
 
     this.angle = Math.random() * 2 * Math.PI;
-    this.v = 1000 / this.size;
+    this.v = 500 / this.size;
 
     this.cooltime = 1;
-    this.life = 200 / this.size;
+    this.life = 400 / this.size;
 
     this.image.src = images[Math.floor(Math.random() * images.length)];
   }

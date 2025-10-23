@@ -20,7 +20,7 @@ class Tangerine {
     this.size = size;
 
     this.angle = Math.random() * 2 * Math.PI;
-    this.v = 500 / Math.exp(this.size, 0.5);;
+    this.v = 50000 / Math.exp(this.size, 0.5);;
 
     this.cooltime = 1;
     this.life = 200 / this.size;

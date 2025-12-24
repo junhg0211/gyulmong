@@ -1,4 +1,4 @@
-const FPS = 144;
+const fps = 144;
 
 let canvas;
 let context;
@@ -20,7 +20,7 @@ class Tangerine {
     this.size = size;
 
     this.angle = Math.random() * 2 * Math.PI;
-    this.v = 1000 / this.size;
+    this.v = 100000 / this.size;
 
     this.cooltime = 1;
     this.life = 200 / this.size;
@@ -29,8 +29,10 @@ class Tangerine {
   }
 
   move() {
-    const vx = Math.cos(this.angle) * this.v;
-    const vy = Math.sin(this.angle) * this.v;
+    const v = this.v / fps;
+
+    const vx = Math.cos(this.angle) * v;
+    const vy = Math.sin(this.angle) * v;
     this.x += vx;
     this.y += vy;
 
@@ -56,12 +58,12 @@ class Tangerine {
   }
 
   tickTanger() {
-    this.life -= 1 / FPS;
-    this.cooltime -= 1 / FPS;
+    this.life -= 1 / fps;
+    this.cooltime -= 1 / fps;
 
     const distance = Math.hypot(this.x - mouseX, this.y - mouseY);
 
-    if (this.life <= 0 || distance < this.size && mouseDown) {
+    if (this.life <= 0 || (distance < this.size && mouseDown)) {
       this.split();
 
       summonParticle(this.x, this.y, 20);
@@ -81,7 +83,7 @@ class Tangerine {
           this.x - this.size / 2 + dx,
           this.y - this.size / 2 + dy,
           this.size * 1.5,
-          this.size * 1.5,
+          this.size * 1.5
         );
       }
     }
@@ -180,14 +182,21 @@ document.addEventListener("DOMContentLoaded", () => {
     new Tangerine(
       (canvas.width / 2) * window.devicePixelRatio,
       (canvas.height / 2) * window.devicePixelRatio,
-      500,
-    ),
+      500
+    )
   );
+
+  let previousTime = Date.now();
 
   setInterval(() => {
     tick();
     render();
-  }, 1000 / FPS);
+
+    const currentTime = Date.now();
+    const deltaTime = currentTime - previousTime;
+    previousTime = currentTime;
+    fps = 1000 / deltaTime;
+  });
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -196,15 +205,13 @@ document.addEventListener("mousemove", (e) => {
 });
 
 document.addEventListener("mousedown", (e) => {
-  if (e.button !== 0)
-    return;
-  
+  if (e.button !== 0) return;
+
   mouseDown = true;
 });
 
 document.addEventListener("mouseup", (e) => {
-  if (e.button !== 0)
-    return;
-  
+  if (e.button !== 0) return;
+
   mouseDown = false;
-})
+});

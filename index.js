@@ -1,4 +1,4 @@
-const fps = 144;
+let fps = 144;
 
 let canvas;
 let context;
